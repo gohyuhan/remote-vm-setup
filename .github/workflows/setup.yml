@@ -1,0 +1,75 @@
+# Run setup.sh, which ends with verify.sh, on clean machines: Ubuntu, Debian, Fedora, and Arch on
+# x86_64 and arm64, and macOS on Apple silicon and Intel. A job passes only if verify.sh passes.
+name: setup
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A new push cancels the run still in progress for the same branch.
+concurrency:
+  group: setup-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"
+
+jobs:
+  linux:
+    # GitHub hosts only Ubuntu VMs, with many tools preinstalled, so each distro runs as a fresh
+    # container on the runner, as a non-root user with sudo.
+    name: ${{ matrix.image }} on ${{ matrix.runner }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        image: ["ubuntu:22.04", "ubuntu:24.04", "ubuntu:26.04", "debian:12", "debian:13", "fedora:44", "fedora:45", "archlinux:latest"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Use Arch Linux ARM on arm64
+        # Arch Linux is x86_64 only. Its arm64 port ships a root filesystem tarball instead of a
+        # Docker image (archlinuxarm.org/platforms/armv8/generic). It is tagged archlinux:latest,
+        # so the next step runs it without pulling.
+        if: matrix.image == 'archlinux:latest' && runner.arch == 'ARM64'
+        run: curl -fsSL http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz | docker import - archlinux:latest
+      - name: setup.sh
+        run: |
+          docker run --rm -e CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC -v "$PWD:/src:ro" "${{ matrix.image }}" bash -c '
+            set -e
+            if command -v apt-get >/dev/null; then
+              apt-get update && apt-get install -y sudo
+            elif command -v dnf >/dev/null; then
+              dnf install -y sudo shadow-utils util-linux
+            elif command -v pacman >/dev/null; then
+              # pacman downloads in a Landlock sandbox, which this container cannot apply
+              # ("Landlock ruleset could not be applied"). DisableSandbox is pacman.conf(5).
+              sed -i "/^\[options\]/a DisableSandbox" /etc/pacman.conf
+              pacman-key --init && pacman-key --populate && pacman -Sy --noconfirm sudo
+            fi
+            useradd -m tester
+            echo "tester ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/tester
+            su tester -c "cp -R /src ~/setup && bash ~/setup/setup.sh"
+          '
+
+  macos:
+    name: ${{ matrix.runner }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-26, macos-26-intel]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: setup.sh
+        # The runner image has Homebrew, rustup, Node, Go, and more on PATH and in HOME. setup.sh
+        # leaves installed tools alone, so a fresh HOME and the system PATH stand in for a clean Mac.
+        run: |
+          mkdir "$RUNNER_TEMP/home"
+          env -i HOME="$RUNNER_TEMP/home" USER="$USER" LOGNAME="$USER" PATH=/usr/bin:/bin:/usr/sbin:/sbin \
+            CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 bash ./setup.sh

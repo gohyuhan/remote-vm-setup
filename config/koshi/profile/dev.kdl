@@ -1,0 +1,32 @@
+version 2
+
+lock
+
+tab {
+    horizontal {
+        stack {
+            size "50%"
+
+            pane {
+                cwd "~/"
+                focus
+            }
+
+            pane {
+                cwd "~/"
+            }
+        }
+
+        stack {
+            size "50%"
+
+            pane {
+                cwd "~/"
+            }
+
+            pane {
+                cwd "~/"
+            }
+        }
+    }
+}

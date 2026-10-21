@@ -1,0 +1,57 @@
+version 2
+
+theme "dracula"
+allow-beta-features #true
+allow-other-users #false
+// remote-listen "0.0.0.0:7654"  // sets the address; opens no port on its own
+// shared-sessions-dir "/var/run/koshi"  // optional override
+auto-close-session #false
+image-support #true
+reduced-motion #false
+stay-in-pane-placement-mode-after-placement #true
+remote-reconnect #true
+
+pane {
+    min-cols 2
+    min-rows 1
+    gap 0
+}
+
+scrollback {
+    max-lines 10000
+    max-bytes 33554432       // 32 MiB
+    scroll-on-input #true
+}
+
+layout {
+    new-pane-direction "right"
+}
+
+mouse {
+    border-resize #true
+    scroll-lines 1
+    wheel "scroll-scrollback"
+}
+
+copy {
+    trim-trailing-whitespace #true
+}
+
+terminal {
+    term "xterm-256color"
+    colorterm "truecolor"
+    default-shell "/bin/zsh"     // default: omit this line to use your $SHELL
+    extended-keys "always"
+}
+
+logging {
+    enabled #false
+    level   "warning"
+    format  "pretty"
+}
+
+update {
+    auto-check #true
+    check-interval-days 14
+    allow-prerelease #true
+}

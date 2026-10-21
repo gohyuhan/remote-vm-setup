@@ -1,0 +1,19 @@
+{
+  "file_watcher_debounce_milli_second": 250,
+  "git_files_active_refresh_duration_milli_second": 2500,
+  "git_fetch_duration_milli_second": 60000,
+  "git_init_default_branch": "main",
+  "left_panel_width_ratio": 0.4,
+  "right_panel_width_ratio": 0.6,
+  "language_code": "JA",
+  "last_update_check_time": "2026-10-21T06:06:59.617567Z",
+  "auto_update": true,
+  "editor": "neovim",
+  "max_commit_log_count": 2500,
+  "max_reflog_count": 2500,
+  "allow_commit_graph_write": true,
+  "max_log_count": 300,
+  "show_x_log": 3,
+  "override_signing_ui_suspend": false,
+  "ff_merge": false
+}

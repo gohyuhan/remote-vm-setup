@@ -1,0 +1,63 @@
+// keybinding.kdl — the complete default keymap.
+version 2
+
+chord-timeout-ms 500
+which-key-delay-ms 300
+max-chord-depth 4
+leader "C-"                      // the leader = the Ctrl modifier run (default)
+// unlock-alternative "<A-u>"    // optional extra unlock chord; off by default
+
+mode "normal" {
+    // reserved lock/unlock chord — explicit, never moves with the leader
+    bind "<C-l>" "core:lock"
+
+    // leader-relative — rebind `leader` and all of these move together
+    bind "<leader>q" "core:quit"
+    bind "<leader>g" "core:mouse-select"
+    bind "<leader>p n" "core:new-pane"          // <C-p> n with the default leader
+    bind "<leader>p h" "core:new-pane-left"
+    bind "<leader>p j" "core:new-pane-down"
+    bind "<leader>p k" "core:new-pane-up"
+    bind "<leader>p l" "core:new-pane-right"
+    bind "<leader>p x" "core:close-pane-tree"
+    bind "<leader>p <Left>" "core:focus-pane-left"
+    bind "<leader>p <Down>" "core:focus-pane-down"
+    bind "<leader>p <Up>" "core:focus-pane-up"
+    bind "<leader>p <Right>" "core:focus-pane-right"
+    bind "<leader>s <Left>" "core:resize-pane-left"
+    bind "<leader>s <Down>" "core:resize-pane-down"
+    bind "<leader>s <Up>" "core:resize-pane-up"
+    bind "<leader>s <Right>" "core:resize-pane-right"
+    bind "<leader>t n" "core:new-tab"           // <C-t> n with the default leader
+    bind "<leader>t x" "core:close-tab"
+
+    // explicit chords — they never move with the leader
+    bind "<A-f>" "core:toggle-pane-fullscreen"
+    bind "<Tab>" "core:next-tab"
+    bind "<S-Tab>" "core:previous-tab"
+}
+
+mode "locked" {
+    // locked mode passes every other key straight to the program.
+    bind "<C-l>" "core:unlock"
+    bind "<leader>q" "core:quit"
+    remove "<leader>p m"
+    bind "<leader>g" "core:mouse-select"
+}
+
+mode "pane-placement" {
+    // Placement owns these keys while a pane placement is open.
+    bind "<Left>" "core:select-pane-target-left"
+    bind "<Down>" "core:select-pane-target-down"
+    bind "<Up>" "core:select-pane-target-up"
+    bind "<Right>" "core:select-pane-target-right"
+    bind "<S-Left>" "core:select-pane-insertion-left"
+    bind "<S-Down>" "core:select-pane-insertion-down"
+    bind "<S-Up>" "core:select-pane-insertion-up"
+    bind "<S-Right>" "core:select-pane-insertion-right"
+    bind "<Space>" "core:cycle-pane-placement-span"
+    bind "<Tab>" "core:select-next-placement-tab"
+    bind "<S-Tab>" "core:select-previous-placement-tab"
+    bind "<CR>" "core:confirm-pane-placement"
+    bind "<Esc>" "core:cancel-pane-placement"
+}
