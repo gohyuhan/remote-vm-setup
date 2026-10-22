@@ -32,12 +32,15 @@ CI runs `setup.sh` on these systems:
 
 - macOS 26 on Apple silicon. Intel Macs are not supported.
 - On x86_64 and arm64:
-  - Ubuntu 22.04, 24.04, 26.04
-  - Debian 12, 13
+  - Ubuntu 24.04, 26.04
+  - Debian 13
   - Fedora 44, 45
   - Arch Linux (Arch Linux ARM on arm64)
+- On x86_64 only:
+  - Ubuntu 22.04
+  - Debian 12
 
-Linux needs glibc 2.34 or later.
+On x86_64, Linux needs glibc 2.34 or later. On arm64, Linux needs glibc 2.39 or later.
 
 ## Set up a machine
 

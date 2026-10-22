@@ -15,6 +15,7 @@
 #   dnf     Fedora, RHEL/Rocky/Alma/Oracle/CentOS Stream 9+, Amazon Linux 2023
 #   zypper  openSUSE
 #   pacman  Arch
+# arm64 Linux needs glibc 2.39+ (the koshi release binary requires it): Ubuntu 24.04+, Debian 13+.
 # Distro base packages (git, zsh, the C compiler) come from the distro and are not pinned.
 set -euo pipefail
 
@@ -146,7 +147,13 @@ install_macos_base() {
 
 # Runs after the base packages, so python3 is present on minimal images that lack getconf.
 check_glibc() {
-  local version major minor
+  local version major minor need_minor=34 distros="Ubuntu 22.04+, Debian 12+, RHEL 9+"
+  # koshi's arm64 Linux release binary needs glibc 2.39 ("GLIBC_2.39 not found" on Ubuntu 22.04
+  # and Debian 12).
+  if [ "$cpu" = "arm64" ]; then
+    need_minor=39
+    distros="Ubuntu 24.04+, Debian 13+"
+  fi
   version="$(python3 -c 'import platform; print(platform.libc_ver()[1])')"
   if [ -z "$version" ]; then
     die "glibc not found. musl distros such as Alpine are not supported."
@@ -154,8 +161,8 @@ check_glibc() {
   major="${version%%.*}"
   minor="${version#*.}"
   minor="${minor%%.*}"
-  if [ "$major" -lt 2 ] || { [ "$major" -eq 2 ] && [ "$minor" -lt 34 ]; }; then
-    die "glibc $version is too old; need 2.34+ (Ubuntu 22.04+, Debian 12+, RHEL 9+)."
+  if [ "$major" -lt 2 ] || { [ "$major" -eq 2 ] && [ "$minor" -lt "$need_minor" ]; }; then
+    die "glibc $version is too old; need 2.$need_minor+ on $cpu ($distros)."
   fi
 }
 

@@ -29,6 +29,10 @@ jobs:
       matrix:
         runner: [ubuntu-24.04, ubuntu-24.04-arm]
         image: ["ubuntu:22.04", "ubuntu:24.04", "ubuntu:26.04", "debian:12", "debian:13", "fedora:44", "fedora:45", "archlinux:latest"]
+        # setup.sh refuses these: arm64 Linux needs glibc 2.39 (the koshi release binary requires it).
+        exclude:
+          - { runner: ubuntu-24.04-arm, image: "ubuntu:22.04" }
+          - { runner: ubuntu-24.04-arm, image: "debian:12" }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Use Arch Linux ARM on arm64
