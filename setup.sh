@@ -9,6 +9,7 @@
 # Versions are pinned for the first install. A tool that is already installed is left alone,
 # so tools that update themselves (Claude Code, gitti, koshi) are never downgraded.
 #
+# macOS needs Apple silicon (arm64); Intel Macs are not supported.
 # Linux needs x86_64 or arm64, glibc 2.34+ (official Node.js binaries require it), and one of:
 #   apt     Ubuntu 22.04+, Debian 12+
 #   dnf     Fedora, RHEL/Rocky/Alma/Oracle/CentOS Stream 9+, Amazon Linux 2023
@@ -90,11 +91,13 @@ case "$(uname -m)" in
     ;;
   *) die "Unsupported CPU: $(uname -m)" ;;
 esac
+if [ "$os-$cpu" = "darwin-x86_64" ]; then
+  die "Intel Macs are not supported. macOS needs Apple silicon."
+fi
 
 # linux-arm64 builds rtk from source instead; see install_tools.
 case "$os-$cpu" in
   darwin-arm64) rtk_target="aarch64-apple-darwin" ;;
-  darwin-x86_64) rtk_target="x86_64-apple-darwin" ;;
   linux-x86_64) rtk_target="x86_64-unknown-linux-musl" ;;
 esac
 
@@ -103,7 +106,6 @@ esac
 # verify.sh.
 case "$os-$cpu" in
   linux-arm64) mason_gap="clangd" ;;
-  darwin-x86_64) mason_gap="swiftlint" ;;
   *) mason_gap="" ;;
 esac
 
@@ -357,12 +359,6 @@ install_mason_gap() {
         curl -fsSL "https://github.com/llvm/llvm-project/releases/download/llvmorg-$version/LLVM-$version-Linux-ARM64.tar.xz" |
           tar -C "$dest.partial" --strip-components=1 --wildcards --wildcards-match-slash -xJf - \
             '*/bin/clangd' '*/lib/clang/*'
-        ;;
-      swiftlint)
-        # The universal macOS binary covers Intel Macs.
-        curl -fsSLo "$tmp_dir/swiftlint.zip" \
-          "https://github.com/realm/SwiftLint/releases/download/$version/portable_swiftlint.zip"
-        unzip -q "$tmp_dir/swiftlint.zip" -d "$dest.partial"
         ;;
     esac
     mv "$dest.partial" "$dest"

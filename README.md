@@ -28,13 +28,14 @@ The first install uses the locked versions. Claude Code, gitti, and koshi keep a
 
 ## Supported platforms
 
-CI runs `setup.sh` on these systems, on x86_64 and arm64:
+CI runs `setup.sh` on these systems:
 
-- macOS 26
-- Ubuntu 22.04, 24.04, 26.04
-- Debian 12, 13
-- Fedora 44, 45
-- Arch Linux (Arch Linux ARM on arm64)
+- macOS 26 on Apple silicon. Intel Macs are not supported.
+- On x86_64 and arm64:
+  - Ubuntu 22.04, 24.04, 26.04
+  - Debian 12, 13
+  - Fedora 44, 45
+  - Arch Linux (Arch Linux ARM on arm64)
 
 Linux needs glibc 2.34 or later.
 

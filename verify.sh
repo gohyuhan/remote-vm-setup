@@ -21,7 +21,6 @@ failures=0
 # installs it from the project's own release instead.
 case "$(uname -s)-$(uname -m)" in
   Linux-aarch64 | Linux-arm64) mason_gap="clangd" ;;
-  Darwin-x86_64) mason_gap="swiftlint" ;;
   *) mason_gap="" ;;
 esac
 
@@ -89,7 +88,6 @@ mason_gap_matches() {
   want="$(locked mason "$mason_gap")"
   case "$mason_gap" in
     clangd) got="$(version_of clangd --version)" ;;
-    swiftlint) got="$(version_of swiftlint version)" ;;
   esac
   if [ "$got" != "$want" ]; then
     echo "installed ${got:-nothing}, lock $want"
