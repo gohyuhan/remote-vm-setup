@@ -174,7 +174,10 @@ install_linux_base() {
       sleep 10
     done
   elif has dnf; then
-    install="dnf install -y"
+    # Fedora's metalink also accepts a mirror's index that is days old (mm0:alternates); its
+    # packages can be gone from every mirror ("All mirrors were tried"). --refresh fetches the
+    # index again on each retry below, and the metalink lists the mirrors in a new order each time.
+    install="dnf install -y --refresh"
     base="git ca-certificates tar gzip xz unzip zsh gcc gcc-c++ make clang-devel python3 findutils diffutils"
   elif has zypper; then
     install="zypper --non-interactive install"
@@ -195,7 +198,7 @@ install_linux_base() {
 
   log "Installing system packages"
   # $install and $base are word lists; the word splitting is intended.
-  $sudo_cmd $install $base
+  retry $sudo_cmd $install $base
   check_glibc
 }
 
