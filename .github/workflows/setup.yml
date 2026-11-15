@@ -53,7 +53,10 @@ jobs:
               # pacman downloads in a Landlock sandbox, which this container cannot apply
               # ("Landlock ruleset could not be applied"). DisableSandbox is pacman.conf(5).
               sed -i "/^\[options\]/a DisableSandbox" /etc/pacman.conf
-              pacman-key --init && pacman-key --populate && pacman -Sy --noconfirm sudo
+              # -Syu, not -Sy: Arch does not support partial upgrades. A new sudo can need a newer
+              # library (openssl 4) than the image packages were built against (curl and pacman
+              # need openssl 3), and only a full upgrade moves all of them together.
+              pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm sudo
             fi
             useradd -m tester
             echo "tester ALL=(ALL) NOPASSWD:ALL" >/etc/sudoers.d/tester

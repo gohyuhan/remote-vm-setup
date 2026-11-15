@@ -107,6 +107,7 @@ version_of() {
   echo "tool gitti $(version_of gitti --version)"
   echo "tool koshi $(version_of koshi --version)"
   echo "tool claude-code $(version_of claude --version)"
+  echo "tool pi-coding-agent $(version_of pi --version)"
   echo "tool pre-commit $(version_of pre-commit --version)"
 } >"$lock"
 

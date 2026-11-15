@@ -61,8 +61,8 @@ sys.exit(0 if installed > locked else 1)
 PY
 }
 
-# version_matches NAME COMMAND...: the installed version equals the lock. Claude Code, gitti,
-# and koshi update themselves, so a newer version of those passes too.
+# version_matches NAME COMMAND...: the installed version equals the lock. Claude Code, pi,
+# gitti, and koshi update themselves, so a newer version of those passes too.
 version_matches() {
   local name="$1" want got
   shift
@@ -72,7 +72,7 @@ version_matches() {
     return 0
   fi
   case "$name" in
-    claude-code | gitti | koshi)
+    claude-code | pi-coding-agent | gitti | koshi)
       if [ -n "$got" ] && newer "$got" "$want"; then
         return 0
       fi
@@ -134,6 +134,7 @@ check "rtk $(locked tool rtk)" version_matches rtk rtk --version
 check "gitti $(locked tool gitti)" version_matches gitti gitti --version
 check "koshi $(locked tool koshi)" version_matches koshi koshi --version
 check "claude $(locked tool claude-code)" version_matches claude-code claude --version
+check "pi $(locked tool pi-coding-agent)" version_matches pi-coding-agent pi --version
 check "pre-commit $(locked tool pre-commit)" version_matches pre-commit pre-commit --version
 check "rust-analyzer" rust-analyzer --version
 check "npm" npm --version

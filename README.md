@@ -16,6 +16,7 @@ Each tool installs at the version in `config/versions.lock`.
 | Python, pre-commit | `uv python install`, `uv tool install` |
 | rtk, gitti, koshi | Release binary in `~/.local/bin` (on arm64 Linux, rtk builds from its release tag) |
 | Claude Code | Official installer, at the locked version |
+| pi | `npm install -g`, at the locked version (the pi.dev installer cannot pin a version) |
 | Neovim plugins | lazy.nvim, at the commits in `config/nvim/lazy-lock.json` |
 | Treesitter parsers, Mason packages | The locked list and versions |
 | Claude Code marketplaces and plugins | The locked marketplace commits |

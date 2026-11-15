@@ -7,7 +7,7 @@
 # Run it on the target machines, not on the Mac that collect.sh reads from.
 #
 # Versions are pinned for the first install. A tool that is already installed is left alone,
-# so tools that update themselves (Claude Code, gitti, koshi) are never downgraded.
+# so tools that update themselves (Claude Code, pi, gitti, koshi) are never downgraded.
 #
 # macOS needs Apple silicon (arm64); Intel Macs are not supported.
 # Linux needs x86_64 or arm64, glibc 2.34+ (official Node.js binaries require it), and one of:
@@ -63,7 +63,7 @@ if [ ! -f "$lock" ]; then
   die "$lock is missing. Run collect.sh on the source Mac first."
 fi
 for tool in neovim go node python rust ripgrep fd tree-sitter-cli gopls uv rtk gitti koshi \
-  claude-code pre-commit; do
+  claude-code pi-coding-agent pre-commit; do
   pin "$tool" >/dev/null
 done
 
@@ -298,6 +298,15 @@ install_tools() {
   if ! has claude; then
     log "Installing Claude Code $version"
     curl -fsSL https://claude.ai/install.sh | bash -s "$version"
+  fi
+
+  # pi.dev/install.sh always takes the latest release, so install the locked version with npm
+  # instead (the npm command from docs.pi.dev/latest/quickstart.md). It lands in the pinned
+  # Node's bin directory, which the env file puts on PATH.
+  version="$(pin pi-coding-agent)"
+  if ! has pi; then
+    log "Installing pi $version"
+    npm install -g --ignore-scripts "@earendil-works/pi-coding-agent@$version"
   fi
 
   version="$(pin rust)"
